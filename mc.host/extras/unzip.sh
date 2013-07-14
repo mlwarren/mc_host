@@ -1,1 +1,1 @@
-nzip MCTemplate.zip -d ./
+unzip MCTemplate.zip -d ./
