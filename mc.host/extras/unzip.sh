@@ -1,0 +1,1 @@
+nzip MCTemplate.zip -d ./
