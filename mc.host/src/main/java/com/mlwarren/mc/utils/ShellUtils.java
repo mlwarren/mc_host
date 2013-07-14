@@ -19,4 +19,19 @@ public class ShellUtils {
 		}
 		LoggingUtils.log("DEBUG", "outputToConsole <");
 	}
+	
+	public static String outputToString(Process p){
+		String retVal="";
+		try{
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String s = "";
+			while ((s = stdInput.readLine()) != null) {
+				retVal+=s;
+			}
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		return retVal;
+	}
 }
