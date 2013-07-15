@@ -13,12 +13,20 @@ import java.util.List;
 import com.mlwarren.mc.utils.LoggingUtils;
 import com.mlwarren.mc.utils.ShellUtils;
 
-public class Provision {
-	public void createNewServer(String serverSourceAbsolutePath, String zipFileName, String serverDestinationAbsolutePath){
+public class Provision implements Runnable{
+	String serverSourceAbsolutePath;
+	String zipFileName;
+	String serverDestinationAbsolutePath;
+	public Provision(String serverSourceAbsolutePath, String zipFileName, String serverDestinationAbsolutePath){
+		this.serverSourceAbsolutePath=serverSourceAbsolutePath;
+		this.zipFileName=zipFileName;
+		this.serverDestinationAbsolutePath=serverDestinationAbsolutePath;
+	}
+	
+	public void createNewServer(){
 		LoggingUtils.log("DEBUG", "createNewServer >");
 		copyZipToDestination(serverSourceAbsolutePath, zipFileName, serverDestinationAbsolutePath);
 		configureServerProperties(serverDestinationAbsolutePath+zipFileName);
-		startServer(serverDestinationAbsolutePath,zipFileName);
 		LoggingUtils.log("DEBUG", "createNewServer <");
 	}
 	
@@ -69,7 +77,7 @@ public class Provision {
 		LoggingUtils.log("DEBUG", "configureServerProperties <");
 	}
 	
-	public void startServer(String serverDestinationAbsolutePath, String zipFileName){
+	public void startServer(){
 		LoggingUtils.log("DEBUG", "startServer >");
 		try {
 			buildStartMinecraftShellScript(serverDestinationAbsolutePath+zipFileName);
@@ -88,11 +96,16 @@ public class Provision {
 		try{
 			FileWriter fw = new FileWriter(new File(minecraftDirectory+"/start_minecraft.sh"));
 			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write("java -Xmx2048M -Xms32M -jar " + minecraftDirectory + "/minecraft_server.1.6.2.jar nogui");
+			bw.write("cd " + minecraftDirectory +"\n");
+			bw.write("java -Xmx2048M -Xms32M -jar minecraft_server.1.6.2.jar nogui");
 			bw.close();
 		}
 		catch(IOException e){
 			e.printStackTrace();
 		}
+	}
+
+	public void run() {
+		startServer();
 	}
 }
