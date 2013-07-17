@@ -97,7 +97,7 @@ public class Provision implements Runnable{
 			FileWriter fw = new FileWriter(new File(minecraftDirectory+"/start_minecraft.sh"));
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write("cd " + minecraftDirectory +"\n");
-			bw.write("java -Xmx2048M -Xms32M -jar minecraft_server.1.6.2.jar nogui");
+			bw.write("java -Xmx2048M -Xms32M -jar minecraft_server.1.6.2.jar nogui &");
 			bw.close();
 		}
 		catch(IOException e){
