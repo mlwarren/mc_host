@@ -2,12 +2,16 @@ package com.mlwarren.mc;
 
 import java.io.Console;
 
-import com.mlwarren.mc.utils.LoggingUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class Main {
 	
+	private static Logger logger = LogManager.getLogger(Main.class);
+	
 	public static void main(String[] args) {
-		LoggingUtils.log("DEBUG", "main >");
+		logger.debug( "main >");
 		if(args.length!=2){
 			System.err.println("Usage: java -jar <jarname> <source_directory> <zip_name>");
 			System.exit(1);
@@ -20,16 +24,13 @@ public class Main {
 		while(!input.equals("q")){
 			input = console.readLine("Provide destination directory... Don't forget trailing / \n");
 			String destinationDirectory = input;
-			Provision p = new Provision(sourceDirectory, zipName, destinationDirectory);
-			p.createNewServer();
-			Thread t = new Thread(p);
-			t.start();
+			ServerProvisioner sp = new ServerProvisioner();
+			sp.createNewServer(sourceDirectory, zipName, destinationDirectory);
 			System.out.println("New container provisioned...");
-			System.out.println(t.toString());
 			input = console.readLine("Provision new server (p), Quit (q)");
 		}
 		
-		LoggingUtils.log("DEBUG", "main <");
+		logger.debug( "main <");
 	}
 
 }

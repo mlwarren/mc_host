@@ -6,21 +6,57 @@
   <name>Minecraft Host</name>
   <description>Create, destroy, configure minecraft servers.</description>
   
-  <build>
-  <plugins>
-    <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-jar-plugin</artifactId>
-	<version>2.4</version>
-	<configuration>
-	  <archive>
-	    <manifest>
-		<mainClass>com.mlwarren.mc.Main</mainClass>
-	    </manifest>
-	  </archive>
-	</configuration>
-    </plugin>
-  </plugins>
-</build>
+	<dependencies>
+	  <dependency>
+	    <groupId>org.apache.logging.log4j</groupId>
+	    <artifactId>log4j-api</artifactId>
+	    <version>2.0-beta8</version>
+	  </dependency>
+	  <dependency>
+	    <groupId>org.apache.logging.log4j</groupId>
+	    <artifactId>log4j-core</artifactId>
+	    <version>2.0-beta8</version>
+	  </dependency>
+	  <dependency>
+	    <groupId>org.hsqldb</groupId>
+    	<artifactId>hsqldb</artifactId>
+	    <version>2.2.9</version>
+		</dependency>
+	</dependencies>
+  
+<!--   <build> -->
+<!--   <plugins> -->
+<!--     <plugin> -->
+<!-- 	<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 	<artifactId>maven-jar-plugin</artifactId> -->
+<!-- 	<version>2.4</version> -->
+<!-- 	<configuration> -->
+<!-- 	  <archive> -->
+<!-- 	    <manifest> -->
+<!-- 		<mainClass>com.mlwarren.mc.Main</mainClass> -->
+<!-- 	    </manifest> -->
+<!-- 	  </archive> -->
+<!-- 	</configuration> -->
+<!--     </plugin> -->
+<!--   </plugins> -->
+<!-- </build> -->
+
+	<build>
+	  <plugins>
+	    <plugin>
+	      <artifactId>maven-assembly-plugin</artifactId>
+	      <configuration>
+	        <archive>
+	          <manifest>
+	            <mainClass>com.mlwarren.mc.Main</mainClass>
+	          </manifest>
+	        </archive>
+	        <descriptorRefs>
+	          <descriptorRef>jar-with-dependencies</descriptorRef>
+	        </descriptorRefs>
+	      </configuration>
+	    </plugin>
+	  </plugins>
+	</build>
   
 </project>

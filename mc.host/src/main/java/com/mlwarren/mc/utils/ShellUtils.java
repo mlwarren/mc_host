@@ -4,9 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ShellUtils {
+	
+	private static Logger logger = LogManager.getLogger(ShellUtils.class);
+	
 	public static void outputToConsole(Process p){
-		LoggingUtils.log("DEBUG","outputToConsole >");
+		logger.debug("outputToConsole >");
 		try{
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String s = "";
@@ -17,7 +23,7 @@ public class ShellUtils {
 		catch(IOException e){
 			e.printStackTrace();
 		}
-		LoggingUtils.log("DEBUG", "outputToConsole <");
+		logger.debug( "outputToConsole <");
 	}
 	
 	public static String outputToString(Process p){
