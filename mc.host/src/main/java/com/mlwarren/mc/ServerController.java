@@ -9,8 +9,7 @@ public class ServerController{
 	
 	public void startServer(String serverPath){
 		logger.debug( "startServer >");
-		ServerStarter starter = new ServerStarter();
-		starter.run();
+		ServerStarter starter = new ServerStarter(serverPath);
 		Thread t = new Thread(starter);
 		t.start();
 		logger.debug( "startServer <");

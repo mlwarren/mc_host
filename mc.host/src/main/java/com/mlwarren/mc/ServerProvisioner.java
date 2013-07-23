@@ -34,7 +34,9 @@ public class ServerProvisioner{
 	public void copyZipToDestination(String serverSourceAbsolutePath, String outputDirectory, String serverDestinationAbsolutePath){
 		logger.debug( "copyZipToDestination >");
 		try {
-			Process p = Runtime.getRuntime().exec("cp " + serverSourceAbsolutePath+outputDirectory+".zip" + " " + serverDestinationAbsolutePath);
+			Process p = Runtime.getRuntime().exec("mkdir " + serverDestinationAbsolutePath);
+			logger.debug(ShellUtils.outputToString(p));
+			p = Runtime.getRuntime().exec("cp " + serverSourceAbsolutePath+outputDirectory+".zip" + " " + serverDestinationAbsolutePath);
 			logger.debug(ShellUtils.outputToString(p));
 			p = Runtime.getRuntime().exec("unzip " + serverDestinationAbsolutePath+outputDirectory+".zip" + " -d " + serverDestinationAbsolutePath);
 			logger.debug(ShellUtils.outputToString(p));
@@ -85,6 +87,7 @@ public class ServerProvisioner{
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write("cd " + minecraftDirectory +"\n");
 			bw.write("java -Xmx2048M -Xms32M -jar minecraft_server.1.6.2.jar nogui &");
+			bw.write("echo $! > ./pid.txt");
 			bw.close();
 			
 			//Make .sh runnable
