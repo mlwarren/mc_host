@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,12 +24,14 @@ public class ServerProvisioner{
 	String zipFileName;
 	String serverDestinationAbsolutePath;
 
-	public void createNewServer(String serverSourceAbsolutePath, String zipFileName, String serverDestinationAbsolutePath){
+	public Server createNewServer(String serverSourceAbsolutePath, String zipFileName, String serverDestinationAbsolutePath){
 		logger.debug( "createNewServer >");
 		copyZipToDestination(serverSourceAbsolutePath, zipFileName, serverDestinationAbsolutePath);
 		configureServerProperties(serverDestinationAbsolutePath+zipFileName);
 		buildStartMinecraftShellScript(serverDestinationAbsolutePath+zipFileName);
+		Server returnServer = new Server(-1, new Date(), serverDestinationAbsolutePath+zipFileName, serverDestinationAbsolutePath+zipFileName+"/start_minecraft.sh");
 		logger.debug( "createNewServer <");
+		return returnServer;
 	}
 	
 	public void copyZipToDestination(String serverSourceAbsolutePath, String outputDirectory, String serverDestinationAbsolutePath){

@@ -7,9 +7,9 @@ public class ServerController{
 	
 	private static Logger logger = LogManager.getLogger(ServerController.class);
 	
-	public void startServer(String serverPath){
+	public void startServer(Server server){
 		logger.debug( "startServer >");
-		ServerStarter starter = new ServerStarter(serverPath);
+		ServerStarter starter = new ServerStarter(server);
 		Thread t = new Thread(starter);
 		t.start();
 		logger.debug( "startServer <");

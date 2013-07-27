@@ -9,10 +9,10 @@ public class ServerStarter implements Runnable{
 	
 	private static Logger logger = LogManager.getLogger(ServerStarter.class);
 	
-	private String serverPath;
+	private Server server;
 	
-	public ServerStarter(String serverPath){
-		this.serverPath = serverPath;
+	public ServerStarter(Server server){
+		this.server = server;
 	}
 	
 	public void run() {
@@ -22,7 +22,7 @@ public class ServerStarter implements Runnable{
 	public void startServer(){
 		logger.debug( "startServer >");
 		try {
-			Runtime.getRuntime().exec(serverPath+"/start_minecraft.sh &");
+			Runtime.getRuntime().exec(server.getServerStartScriptAbsolutePath()+" &");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -36,19 +36,13 @@ public class Main {
 			input = console.readLine("Provide destination directory... Don't forget trailing / \n");
 			String destinationDirectory = input;
 			ServerProvisioner sp = new ServerProvisioner();
-			sp.createNewServer(sourceDirectory, zipName, destinationDirectory);
+			Server server = sp.createNewServer(sourceDirectory, zipName, destinationDirectory);
 			System.out.println("New container provisioned...");
 			ServerController sc = new ServerController();
-			sc.startServer(destinationDirectory+zipName);
+			sc.startServer(server);
 			System.out.println("Started server...");
-			try { //TODO: Fix this depressingly ugly hack
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			String pid = ShellUtils.getPIDForServer(destinationDirectory+zipName);
-			System.out.println("pid = " + pid);
+			server.setPid(ShellUtils.getPIDForServer(server));
+			logger.debug(server.toString());
 			input = console.readLine("Provision new server (p), Quit (q)");
 		}
 		
