@@ -65,8 +65,6 @@ public class Main {
 					continue;
 				}
 				serverController.stopServer(server);
-				//TODO: Update database with server started=false
-				//TODO: will need to track server id.
 				continue;
 			}
 			if(input.equals("T") || input.equals("t")){
@@ -87,26 +85,6 @@ public class Main {
 				}
 				continue;
 			}
-//			input = console.readLine("Provide destination directory... Don't forget trailing / \n");
-//			String destinationDirectory = input;
-//			ServerProvisioner sp = new ServerProvisioner();
-//			Server server = sp.createNewServer(sourceDirectory, zipName, destinationDirectory);
-//			System.out.println("New container provisioned...");
-//			ServerController sc = new ServerController();
-//			sc.startServer(server);
-//			System.out.println("Started server...");
-//			server.setPid(ShellUtils.getPIDForServer(server));
-//			ServerDAO serverDAO = new ServerDAO();
-//			serverDAO.createServerTable();
-//			serverDAO.saveServerToDB(server);
-//			List<Server> serverList = serverDAO.getAllServers();
-//			logger.debug("Server list = " + serverList.toString());
-//			Server serverFromDB = serverDAO.getServerByPID(server.getPid());
-//			logger.debug("Server from db = " + serverFromDB.toString());
-//			ServerDecomissioner serverDecomissioner = new ServerDecomissioner();
-//			logger.debug("Decomission server with pid = " + serverFromDB.getPid());
-//			serverDecomissioner.removeServer(serverFromDB.getPid());
-//			input = console.readLine("Provision new server (p), Quit (q)");
 		}
 		
 		logger.debug( "main <");

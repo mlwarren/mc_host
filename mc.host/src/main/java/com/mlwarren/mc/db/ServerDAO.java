@@ -35,8 +35,13 @@ public class ServerDAO {
 		logger.debug("saveServerToDB < ");
 	}
 	
-	public void updateServer(Server server){
-		//TODO: Make this method
+	public void updateServerStartedByPID(int pid, boolean started){
+		logger.debug("updateServerStartedByPID > ");
+		db.update("UPDATE mc_server set started="+started+" where pid="+pid);
+		if(!started){ //Set pid -1 if server stopped
+			db.update("UPDATE mc_server set pid=-1 where pid = " + pid);
+		}
+		logger.debug("updateServerStartedByPID < ");
 	}
 	
 	public List<Server> getAllServers(){
