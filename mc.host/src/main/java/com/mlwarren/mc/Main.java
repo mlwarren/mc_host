@@ -2,11 +2,13 @@ package com.mlwarren.mc;
 
 import java.io.Console;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mlwarren.mc.db.DBConnector;
+import com.mlwarren.mc.db.ServerDAO;
 import com.mlwarren.mc.utils.ShellUtils;
 
 
@@ -42,7 +44,13 @@ public class Main {
 			sc.startServer(server);
 			System.out.println("Started server...");
 			server.setPid(ShellUtils.getPIDForServer(server));
-			logger.debug(server.toString());
+			ServerDAO serverDAO = new ServerDAO();
+			serverDAO.createServerTable();
+			serverDAO.saveServerToDB(server);
+			List<Server> serverList = serverDAO.getAllServers();
+			logger.debug("Server list = " + serverList.toString());
+			Server serverFromDB = serverDAO.getServerByPID(server.getPid());
+			logger.debug("Server from db = " + serverFromDB.toString());
 			input = console.readLine("Provision new server (p), Quit (q)");
 		}
 		
