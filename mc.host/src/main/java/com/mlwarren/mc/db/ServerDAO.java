@@ -21,7 +21,7 @@ public class ServerDAO {
 	
 	public void createServerTable(){
 		logger.debug("createServerTable > ");
-		db.update("CREATE TABLE mc_server (id INTEGER IDENTITY, pid INTEGER, create_date TIMESTAMP, server_container_absolute_path VARCHAR(256), server_start_script_absolute_path VARCHAR(256))");
+		db.update("CREATE TABLE mc_server (id INTEGER IDENTITY, pid INTEGER, create_date TIMESTAMP, server_container_absolute_path VARCHAR(256), server_start_script_absolute_path VARCHAR(256), started BOOLEAN)");
 		logger.debug("createServerTable < ");
 	}
 	
@@ -30,9 +30,13 @@ public class ServerDAO {
 		Date currentDate = new Date();
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateString = df.format(currentDate);
-		String valueString = "'"+server.getPid()+"'," + "'"+dateString+"'," + "'"+server.getServerContainerAbsolutePath()+"'," + "'"+server.getServerStartScriptAbsolutePath()+"'";
-		db.update("INSERT INTO mc_server(pid,create_date,server_container_absolute_path,server_start_script_absolute_path) VALUES("+valueString+")");
+		String valueString = "'"+server.getPid()+"'," + "'"+dateString+"'," + "'"+server.getServerContainerAbsolutePath()+"'," + "'"+server.getServerStartScriptAbsolutePath()+"'," + "'"+server.isStarted()+"'";
+		db.update("INSERT INTO mc_server(pid,create_date,server_container_absolute_path,server_start_script_absolute_path,started) VALUES("+valueString+")");
 		logger.debug("saveServerToDB < ");
+	}
+	
+	public void updateServer(Server server){
+		//TODO: Make this method
 	}
 	
 	public List<Server> getAllServers(){

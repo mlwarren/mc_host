@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,26 +24,33 @@ public class ServerProvisioner{
 	String zipFileName;
 	String serverDestinationAbsolutePath;
 
-	public Server createNewServer(String serverSourceAbsolutePath, String zipFileName, String serverDestinationAbsolutePath){
+	public Server createNewServer(String serverSourceAbsolutePath, String zipFileName, String serverDirectory, String serverDestinationAbsolutePath){
 		logger.debug( "createNewServer >");
-		copyZipToDestination(serverSourceAbsolutePath, zipFileName, serverDestinationAbsolutePath);
-		configureServerProperties(serverDestinationAbsolutePath+zipFileName);
-		buildStartMinecraftShellScript(serverDestinationAbsolutePath+zipFileName);
-		Server returnServer = new Server(-1, new Date(), serverDestinationAbsolutePath+zipFileName, serverDestinationAbsolutePath+zipFileName+"/start_minecraft.sh");
+		copyZipToDestination(serverSourceAbsolutePath, zipFileName, serverDirectory, serverDestinationAbsolutePath);
+		configureServerProperties(serverDestinationAbsolutePath+serverDirectory);
+		buildStartMinecraftShellScript(serverDestinationAbsolutePath+serverDirectory);
+		Server returnServer = new Server(-1, new Date(), serverDestinationAbsolutePath+serverDirectory, serverDestinationAbsolutePath+serverDirectory+"/start_minecraft.sh", true);
 		logger.debug( "createNewServer <");
 		return returnServer;
 	}
 	
-	public void copyZipToDestination(String serverSourceAbsolutePath, String outputDirectory, String serverDestinationAbsolutePath){
+	public void copyZipToDestination(String serverSourceAbsolutePath, String zipFileNameDirectory, String serverDirectory, String serverDestinationAbsolutePath){
 		logger.debug( "copyZipToDestination >");
 		try {
+			//Make directory for server destination absolute path
 			Process p = Runtime.getRuntime().exec("mkdir " + serverDestinationAbsolutePath);
 			logger.debug(ShellUtils.outputToString(p));
-			p = Runtime.getRuntime().exec("cp " + serverSourceAbsolutePath+outputDirectory+".zip" + " " + serverDestinationAbsolutePath);
+			//Copy zip to this directory
+			p = Runtime.getRuntime().exec("cp " + serverSourceAbsolutePath+zipFileNameDirectory+".zip" + " " + serverDestinationAbsolutePath);
 			logger.debug(ShellUtils.outputToString(p));
-			p = Runtime.getRuntime().exec("unzip " + serverDestinationAbsolutePath+outputDirectory+".zip" + " -d " + serverDestinationAbsolutePath);
+			//Unzip zip file
+			p = Runtime.getRuntime().exec("unzip " + serverDestinationAbsolutePath+zipFileNameDirectory+".zip" + " -d " + serverDestinationAbsolutePath);
 			logger.debug(ShellUtils.outputToString(p));
-			p = Runtime.getRuntime().exec("rm " + serverDestinationAbsolutePath+outputDirectory);
+			//Output zip directory by default will be given zip name, change the name this way
+			p = Runtime.getRuntime().exec("mv " + serverDestinationAbsolutePath+zipFileNameDirectory + " " + serverDestinationAbsolutePath+serverDirectory);
+			logger.debug(ShellUtils.outputToString(p));
+			//Remove zip file
+			p = Runtime.getRuntime().exec("rm " + serverDestinationAbsolutePath+zipFileNameDirectory+".zip");
 			logger.debug(ShellUtils.outputToString(p));
 
 		} catch (IOException e) {

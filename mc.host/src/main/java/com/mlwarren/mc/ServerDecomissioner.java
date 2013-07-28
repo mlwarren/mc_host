@@ -11,7 +11,7 @@ import com.mlwarren.mc.utils.ShellUtils;
 public class ServerDecomissioner {
 	private static Logger logger = LogManager.getLogger(ServerDecomissioner.class);
 	
-	public void removeServer(int pid){
+	public Server removeServer(int pid){
 		logger.debug("removeServer > ");
 		ServerDAO serverDAO = new ServerDAO();
 
@@ -20,7 +20,7 @@ public class ServerDecomissioner {
 		if(server==null){
 			logger.debug("Can't kill that PID, it's not catalogued as a server...");
 			logger.debug("removeServer < ");
-			return;
+			return null;
 		}
 		
 		try{
@@ -37,5 +37,19 @@ public class ServerDecomissioner {
 		serverDAO.deleteServerByPID(pid);
 		
 		logger.debug("removeServer < ");
+		return server;
+	}
+	
+	public void deleteServerFilesFromFileSystem(String serverAbsolutePath){
+		logger.debug("deleteServerFilesFromFileSystem > ");
+		try{
+			logger.debug("Deleting server directory " + serverAbsolutePath);
+			Process p = Runtime.getRuntime().exec("rm -rf " + serverAbsolutePath);
+			logger.debug(ShellUtils.outputToString(p));
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		logger.debug("deleteServerFilesFromFileSystem < ");
 	}
 }

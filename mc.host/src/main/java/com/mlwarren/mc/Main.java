@@ -1,13 +1,11 @@
 package com.mlwarren.mc;
 
 import java.io.Console;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mlwarren.mc.db.DBConnector;
 import com.mlwarren.mc.db.ServerDAO;
 import com.mlwarren.mc.utils.ShellUtils;
 
@@ -18,45 +16,98 @@ public class Main {
 	
 	public static void main(String[] args) {
 		logger.debug( "main >");
-		if(args.length!=2){
-			System.err.println("Usage: java -jar <jarname> <source_directory> <zip_name>");
-			System.exit(1);
-		}
-		String sourceDirectory = args[0];
-		String zipName = args[1];
-		
-//		logger.debug("creating db connector");
-//		DBConnector db = new DBConnector();
-//		db.update("CREATE TABLE sample_table (id INTEGER IDENTITY, str_col VARCHAR(256), num_col INTEGER)");
-//		db.update("INSERT INTO sample_table(str_col,num_col) VALUES('mike',1)");
-//		db.query("SELECT * FROM sample_table");
-//		logger.debug("done creating db connector");
+
+		ServerDAO serverDAO = new ServerDAO();
+		serverDAO.createServerTable(); //Create table if it doesn't already exist
+		ServerProvisioner serverProvisioner = new ServerProvisioner();
+		ServerController serverController = new ServerController();
+		ServerDecomissioner serverDecomissioner = new ServerDecomissioner();
 		
 		Console console = System.console();
-		String input = console.readLine("Provision new server (p), Quit (q)");
-		while(!input.equals("q")){
-			input = console.readLine("Provide destination directory... Don't forget trailing / \n");
-			String destinationDirectory = input;
-			ServerProvisioner sp = new ServerProvisioner();
-			Server server = sp.createNewServer(sourceDirectory, zipName, destinationDirectory);
-			System.out.println("New container provisioned...");
-			ServerController sc = new ServerController();
-			sc.startServer(server);
-			System.out.println("Started server...");
-			server.setPid(ShellUtils.getPIDForServer(server));
-			ServerDAO serverDAO = new ServerDAO();
-			serverDAO.createServerTable();
-			serverDAO.saveServerToDB(server);
-			List<Server> serverList = serverDAO.getAllServers();
-			logger.debug("Server list = " + serverList.toString());
-			Server serverFromDB = serverDAO.getServerByPID(server.getPid());
-			logger.debug("Server from db = " + serverFromDB.toString());
-			ServerDecomissioner serverDecomissioner = new ServerDecomissioner();
-			logger.debug("Decomission server with pid = " + serverFromDB.getPid());
-			serverDecomissioner.removeServer(serverFromDB.getPid());
-			input = console.readLine("Provision new server (p), Quit (q)");
+		String input="";
+		while(!(input.equals("q")||input.equals("Q"))){
+			System.out.println("(C)heck server inventory");
+			System.out.println("(P)rovision new server");
+			System.out.println("(S)top server");
+			System.out.println("S(t)art server");
+			System.out.println("(D)ecomission server");
+			System.out.println("(Q)uit");
+			input=console.readLine();
+			if(input.equals("C") || input.equals("c")){
+				System.out.println("Server inventory check:");
+				List<Server> serverList = serverDAO.getAllServers();
+				if(serverList==null){
+					System.out.println("No servers provisoined.");
+				}
+				else{
+					System.out.println(serverList.toString());
+				}
+				continue;
+			}
+			if(input.equals("P") || input.equals("p")){
+				System.out.println("Provisioning new server:");
+				String serverSourceAbsolutePath = console.readLine("Enter server source absolute path, remember to include trailing /\n");
+				String zipFileName = console.readLine("Enter zip file name, omit .zip extension\n");
+				String serverDestinationAbsolutePath = console.readLine("Enter server destiantion absolute path, remember to include trailing /\n");
+				String serverDirectory = console.readLine("Enter server directory name (relative path), remember to include trailing /\n");
+				Server server = serverProvisioner.createNewServer(serverSourceAbsolutePath, zipFileName, serverDirectory, serverDestinationAbsolutePath);
+				server=serverController.startServer(server);
+				System.out.println("Server provisoned. Server information: ");
+				System.out.println(server);
+				continue;
+			}
+			if(input.equals("S") || input.equals("s")){
+				System.out.println("Stopping server:");
+				String pid = console.readLine("Enter PID of server to stop\n");
+				Server server = serverDAO.getServerByPID(Integer.parseInt(pid));
+				if(server==null){
+					System.out.println("PID not found, cannot stop that server.");
+					continue;
+				}
+				serverController.stopServer(server);
+				//TODO: Update database with server started=false
+				//TODO: will need to track server id.
+				continue;
+			}
+			if(input.equals("T") || input.equals("t")){
+				System.out.println("Starting server:");
+				continue;
+			}
+			if(input.equals("D") || input.equals("d")){
+				System.out.println("Decomissioning server:");
+				String pidString = console.readLine("Enter PID of server to decomission.\n");
+				Server server = serverDecomissioner.removeServer(Integer.parseInt(pidString));
+				if(server!=null){
+					serverDecomissioner.deleteServerFilesFromFileSystem(server.getServerContainerAbsolutePath());
+					System.out.println("Server with PID " + pidString + " has been decomissioned.");
+					continue;
+				}
+				else{
+					System.out.println("Can't decomission that server, it's not in our catalogue");
+				}
+				continue;
+			}
+//			input = console.readLine("Provide destination directory... Don't forget trailing / \n");
+//			String destinationDirectory = input;
+//			ServerProvisioner sp = new ServerProvisioner();
+//			Server server = sp.createNewServer(sourceDirectory, zipName, destinationDirectory);
+//			System.out.println("New container provisioned...");
+//			ServerController sc = new ServerController();
+//			sc.startServer(server);
+//			System.out.println("Started server...");
+//			server.setPid(ShellUtils.getPIDForServer(server));
+//			ServerDAO serverDAO = new ServerDAO();
+//			serverDAO.createServerTable();
+//			serverDAO.saveServerToDB(server);
+//			List<Server> serverList = serverDAO.getAllServers();
+//			logger.debug("Server list = " + serverList.toString());
+//			Server serverFromDB = serverDAO.getServerByPID(server.getPid());
+//			logger.debug("Server from db = " + serverFromDB.toString());
+//			ServerDecomissioner serverDecomissioner = new ServerDecomissioner();
+//			logger.debug("Decomission server with pid = " + serverFromDB.getPid());
+//			serverDecomissioner.removeServer(serverFromDB.getPid());
+//			input = console.readLine("Provision new server (p), Quit (q)");
 		}
-		
 		
 		logger.debug( "main <");
 	}

@@ -12,14 +12,16 @@ public class Server {
 	private Date createDate;
 	private String serverContainerAbsolutePath;
 	private String serverStartScriptAbsolutePath;
+	private boolean started;
 	
 	public Server(int pid, Date createDate, String serverContainerAbsolutePath,
-			String serverStartScriptAbsolutePath) {
+			String serverStartScriptAbsolutePath, boolean started) {
 		logger.debug("server >");
 		this.pid = pid;
 		this.createDate = createDate;
 		this.serverContainerAbsolutePath = serverContainerAbsolutePath;
 		this.serverStartScriptAbsolutePath = serverStartScriptAbsolutePath;
+		this.started = started;
 		logger.debug("server <");
 	}
 	public int getPid() {
@@ -47,13 +49,20 @@ public class Server {
 			String serverStartScriptAbsolutePath) {
 		this.serverStartScriptAbsolutePath = serverStartScriptAbsolutePath;
 	}
+	public boolean isStarted() {
+		return started;
+	}
+	public void setStarted(boolean started) {
+		this.started = started;
+	}
 	
 	public String toString(){
 		String out="";
-		out+="\nMinecraft server ... " + pid + "\n";
-		out+="\tcreateDate ... "+createDate+"\n";
-		out+="\tserverContainerAbsolutePath ... " + serverContainerAbsolutePath + "\n";
-		out+="\tserverStartScriptAbsolutePath ... " + serverStartScriptAbsolutePath + "\n";
+		out+="PID: " + pid;
+		out+="\tCreate Date: " + createDate;
+		out+="\tServer Container: " + serverContainerAbsolutePath;
+		out+="\tStart Script: " + serverStartScriptAbsolutePath;
+		out+="\tStarted: " + started;
 		return out;
 	}
 	

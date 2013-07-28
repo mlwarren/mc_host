@@ -3,7 +3,6 @@ package com.mlwarren.mc.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -42,13 +41,13 @@ public class DBConnector {
 			ResultSet rs = null;
 			st = conn.createStatement();
 			rs=st.executeQuery("SELECT * from mc_server");
-			rs.next(); //now pointing to first row
 			while(rs.next()){
 				int pid = rs.getInt("pid");
 				Date createDate = rs.getTimestamp("create_date");
 				String serverContainerAbsolutePath = rs.getString("server_container_absolute_path");
 				String serverStartScriptAbsolutePath = rs.getString("server_start_script_absolute_path");
-				serverList.add(new Server(pid, createDate, serverContainerAbsolutePath, serverStartScriptAbsolutePath));
+				boolean started = rs.getBoolean("started");
+				serverList.add(new Server(pid, createDate, serverContainerAbsolutePath, serverStartScriptAbsolutePath, started));
 			};
 		}
 		catch(SQLException e){
@@ -75,7 +74,8 @@ public class DBConnector {
 			Date createDate = rs.getTimestamp("create_date");
 			String serverContainerAbsolutePath = rs.getString("server_container_absolute_path");
 			String serverStartScriptAbsolutePath = rs.getString("server_start_script_absolute_path");
-			server = new Server(pid, createDate, serverContainerAbsolutePath, serverStartScriptAbsolutePath);
+			boolean started = rs.getBoolean("started");
+			server = new Server(pid, createDate, serverContainerAbsolutePath, serverStartScriptAbsolutePath,started);
 		}
 		catch(SQLException e){
 			e.printStackTrace();
