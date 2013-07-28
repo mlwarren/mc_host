@@ -14,9 +14,7 @@ public class ServerDAO {
 	
 	private static Logger logger = LogManager.getLogger(ServerDAO.class);
 	private DBConnector db;
-	
-	//db.update("CREATE TABLE sample_table (id INTEGER IDENTITY, str_col VARCHAR(256), num_col INTEGER)");
-	
+		
 	public ServerDAO(){
 		db = new DBConnector();
 	}
@@ -45,6 +43,12 @@ public class ServerDAO {
 	public Server getServerByPID(int pid){
 		logger.debug("getServerByPID >< ");
 		return db.getServerByPID(pid);
+	}
+	
+	public void deleteServerByPID(int pid){
+		logger.debug("deleteServerByPID > ");
+		db.update("DELETE FROM mc_server where pid="+pid);
+		logger.debug("deleteServerByPID < ");
 	}
 	
 }

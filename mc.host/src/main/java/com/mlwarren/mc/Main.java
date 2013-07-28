@@ -51,6 +51,9 @@ public class Main {
 			logger.debug("Server list = " + serverList.toString());
 			Server serverFromDB = serverDAO.getServerByPID(server.getPid());
 			logger.debug("Server from db = " + serverFromDB.toString());
+			ServerDecomissioner serverDecomissioner = new ServerDecomissioner();
+			logger.debug("Decomission server with pid = " + serverFromDB.getPid());
+			serverDecomissioner.removeServer(serverFromDB.getPid());
 			input = console.readLine("Provision new server (p), Quit (q)");
 		}
 		

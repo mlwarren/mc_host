@@ -33,26 +33,6 @@ public class DBConnector {
 			e.printStackTrace();
 		}
 	}
-	
-	public synchronized void query(String expression){
-		try{
-			Statement st = null;
-			ResultSet rs = null;
-			st = conn.createStatement();
-			rs=st.executeQuery(expression);
-			//Result set at this point is actually a cursor pointing before the first row
-			rs.next(); //Now pointing to first row
-			logger.debug("RESULT SET: " + rs.toString());
-			ResultSetMetaData metaData = rs.getMetaData();
-			logger.debug("column count = " + metaData.getColumnCount());
-			logger.debug("col1 = " + rs.getString(1+1)); //SQL is 1 indexed, not 0
-			st.close();
-		}
-		catch(SQLException e)
-		{
-			e.printStackTrace();
-		}
-	}
 
 	public synchronized List<Server> getAllServers(){
 		logger.debug("getAllServers > ");
@@ -86,7 +66,11 @@ public class DBConnector {
 			ResultSet rs = null;
 			st = conn.createStatement();
 			rs=st.executeQuery("SELECT * from mc_server WHERE pid = " + pid);
-			rs.next(); //now pointing to first row
+			if(!rs.next()){
+				logger.debug("Couldn't find pid = " + pid);
+				logger.debug("getServerByPID returning null < ");
+				return null;
+			} //now pointing to first row
 			pid = rs.getInt("pid");
 			Date createDate = rs.getTimestamp("create_date");
 			String serverContainerAbsolutePath = rs.getString("server_container_absolute_path");
