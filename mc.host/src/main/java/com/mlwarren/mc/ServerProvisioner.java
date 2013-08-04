@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mlwarren.mc.db.ServerDAO;
 import com.mlwarren.mc.utils.ShellUtils;
 
 public class ServerProvisioner{
@@ -32,6 +33,14 @@ public class ServerProvisioner{
 		Server returnServer = new Server(-1, -1, new Date(), serverDestinationAbsolutePath+serverDirectory, serverDestinationAbsolutePath+serverDirectory+"/start_minecraft.sh", true);
 		logger.debug( "createNewServer <");
 		return returnServer;
+	}
+	
+	public void editServer(int id){
+		logger.debug("editServer > ");
+		ServerDAO serverDAO = new ServerDAO();
+		Server server = serverDAO.getServerByID(id);
+		configureServerProperties(server.getServerContainerAbsolutePath());
+		logger.debug("editServer < ");
 	}
 	
 	public void copyZipToDestination(String serverSourceAbsolutePath, String zipFileNameDirectory, String serverDirectory, String serverDestinationAbsolutePath){

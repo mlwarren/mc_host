@@ -30,6 +30,7 @@ public class Main {
 			System.out.println("(P)rovision new server");
 			System.out.println("(S)top server");
 			System.out.println("S(t)art server");
+			System.out.println("(E)dit server");
 			System.out.println("(D)ecomission server");
 			System.out.println("(Q)uit");
 			input=console.readLine();
@@ -78,6 +79,18 @@ public class Main {
 				server=serverController.startServer(server);
 				continue;
 			}
+			if(input.equals("E") || input.equals("e")){
+				System.out.println("Editing server:");
+				String id = console.readLine("Enter ID of server to edit\n");
+				Server server = serverDAO.getServerByID(Integer.parseInt(id));
+				if(server==null){
+					System.out.println("ID not found, cannot edit that server.");
+					continue;
+				}
+				serverProvisioner.editServer(Integer.parseInt(id));
+				System.out.println("Server edited, please stop and restart server for edits to take effect.");
+				continue;
+			} //TODO: Create option for upgrading/downgrading server jar, will need to copy jar and edit start_minecraft.sh script
 			if(input.equals("D") || input.equals("d")){
 				System.out.println("Decomissioning server:");
 				String idString = console.readLine("Enter ID of server to decomission.\n");
