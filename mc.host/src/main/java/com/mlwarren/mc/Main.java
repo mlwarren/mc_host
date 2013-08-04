@@ -58,10 +58,10 @@ public class Main {
 			}
 			if(input.equals("S") || input.equals("s")){
 				System.out.println("Stopping server:");
-				String pid = console.readLine("Enter PID of server to stop\n");
-				Server server = serverDAO.getServerByPID(Integer.parseInt(pid));
+				String id = console.readLine("Enter ID of server to stop\n");
+				Server server = serverDAO.getServerByID(Integer.parseInt(id));
 				if(server==null){
-					System.out.println("PID not found, cannot stop that server.");
+					System.out.println("ID not found, cannot stop that server.");
 					continue;
 				}
 				serverController.stopServer(server);
@@ -69,15 +69,22 @@ public class Main {
 			}
 			if(input.equals("T") || input.equals("t")){
 				System.out.println("Starting server:");
+				String id = console.readLine("Enter ID of server to start\n");
+				Server server = serverDAO.getServerByID(Integer.parseInt(id));
+				if(server==null){
+					System.out.println("ID not found, cannot start that server.");
+					continue;
+				}
+				server=serverController.startServer(server);
 				continue;
 			}
 			if(input.equals("D") || input.equals("d")){
 				System.out.println("Decomissioning server:");
-				String pidString = console.readLine("Enter PID of server to decomission.\n");
-				Server server = serverDecomissioner.removeServer(Integer.parseInt(pidString));
+				String idString = console.readLine("Enter ID of server to decomission.\n");
+				Server server = serverDecomissioner.removeServer(Integer.parseInt(idString));
 				if(server!=null){
 					serverDecomissioner.deleteServerFilesFromFileSystem(server.getServerContainerAbsolutePath());
-					System.out.println("Server with PID " + pidString + " has been decomissioned.");
+					System.out.println("Server with ID " + idString + " has been decomissioned.");
 					continue;
 				}
 				else{

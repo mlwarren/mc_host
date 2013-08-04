@@ -11,12 +11,12 @@ import com.mlwarren.mc.utils.ShellUtils;
 public class ServerDecomissioner {
 	private static Logger logger = LogManager.getLogger(ServerDecomissioner.class);
 	
-	public Server removeServer(int pid){
+	public Server removeServer(int id){
 		logger.debug("removeServer > ");
 		ServerDAO serverDAO = new ServerDAO();
 
 		//Make sure given PID is in database
-		Server server = serverDAO.getServerByPID(pid);
+		Server server = serverDAO.getServerByID(id);
 		if(server==null){
 			logger.debug("Can't kill that PID, it's not catalogued as a server...");
 			logger.debug("removeServer < ");
@@ -24,8 +24,8 @@ public class ServerDecomissioner {
 		}
 		
 		try{
-			logger.debug("Killing process with pid = " + pid);
-			Process p = Runtime.getRuntime().exec("kill " + pid);
+			logger.debug("Killing process with pid = " + server.getPid());
+			Process p = Runtime.getRuntime().exec("kill " + server.getPid());
 			logger.debug(ShellUtils.outputToString(p));
 		}
 		catch(IOException e){
@@ -33,8 +33,8 @@ public class ServerDecomissioner {
 		}
 		
 		//Remove server information from database
-		logger.debug("Removing server with PID = " + pid + " from database");
-		serverDAO.deleteServerByPID(pid);
+		logger.debug("Removing server with ID = " + id + " from database");
+		serverDAO.deleteServerByID(id);
 		
 		logger.debug("removeServer < ");
 		return server;

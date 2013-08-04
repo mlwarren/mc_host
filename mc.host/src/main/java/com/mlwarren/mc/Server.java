@@ -8,15 +8,17 @@ import org.apache.logging.log4j.Logger;
 public class Server {
 	private static Logger logger = LogManager.getLogger(Server.class);
 	
+	private int id;
 	private int pid;
 	private Date createDate;
 	private String serverContainerAbsolutePath;
 	private String serverStartScriptAbsolutePath;
 	private boolean started;
 	
-	public Server(int pid, Date createDate, String serverContainerAbsolutePath,
+	public Server(int id, int pid, Date createDate, String serverContainerAbsolutePath,
 			String serverStartScriptAbsolutePath, boolean started) {
 		logger.debug("server >");
+		this.id = id;
 		this.pid = pid;
 		this.createDate = createDate;
 		this.serverContainerAbsolutePath = serverContainerAbsolutePath;
@@ -55,10 +57,17 @@ public class Server {
 	public void setStarted(boolean started) {
 		this.started = started;
 	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	
 	public String toString(){
 		String out="";
-		out+="PID: " + pid;
+		out+="ID: " + id;
+		out+="\tPID: " + pid;
 		out+="\tCreate Date: " + createDate;
 		out+="\tServer Container: " + serverContainerAbsolutePath;
 		out+="\tStart Script: " + serverStartScriptAbsolutePath;

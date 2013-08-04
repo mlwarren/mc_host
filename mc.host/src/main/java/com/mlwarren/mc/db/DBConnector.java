@@ -42,12 +42,13 @@ public class DBConnector {
 			st = conn.createStatement();
 			rs=st.executeQuery("SELECT * from mc_server");
 			while(rs.next()){
+				int id = rs.getInt("id");
 				int pid = rs.getInt("pid");
 				Date createDate = rs.getTimestamp("create_date");
 				String serverContainerAbsolutePath = rs.getString("server_container_absolute_path");
 				String serverStartScriptAbsolutePath = rs.getString("server_start_script_absolute_path");
 				boolean started = rs.getBoolean("started");
-				serverList.add(new Server(pid, createDate, serverContainerAbsolutePath, serverStartScriptAbsolutePath, started));
+				serverList.add(new Server(id, pid, createDate, serverContainerAbsolutePath, serverStartScriptAbsolutePath, started));
 			};
 		}
 		catch(SQLException e){
@@ -70,12 +71,41 @@ public class DBConnector {
 				logger.debug("getServerByPID returning null < ");
 				return null;
 			} //now pointing to first row
+			int id = rs.getInt("id");
 			pid = rs.getInt("pid");
 			Date createDate = rs.getTimestamp("create_date");
 			String serverContainerAbsolutePath = rs.getString("server_container_absolute_path");
 			String serverStartScriptAbsolutePath = rs.getString("server_start_script_absolute_path");
 			boolean started = rs.getBoolean("started");
-			server = new Server(pid, createDate, serverContainerAbsolutePath, serverStartScriptAbsolutePath,started);
+			server = new Server(id, pid, createDate, serverContainerAbsolutePath, serverStartScriptAbsolutePath,started);
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}
+		logger.debug("getServerByPID < ");
+		return server;
+	}
+	
+	public synchronized Server getServerByID(int id){
+		logger.debug("getServerByPID > ");
+		Server server = null;
+		try{
+			Statement st = null;
+			ResultSet rs = null;
+			st = conn.createStatement();
+			rs=st.executeQuery("SELECT * from mc_server WHERE id = " + id);
+			if(!rs.next()){
+				logger.debug("Couldn't find id = " + id);
+				logger.debug("getServerByPID returning null < ");
+				return null;
+			} //now pointing to first row
+			id = rs.getInt("id");
+			int pid = rs.getInt("pid");
+			Date createDate = rs.getTimestamp("create_date");
+			String serverContainerAbsolutePath = rs.getString("server_container_absolute_path");
+			String serverStartScriptAbsolutePath = rs.getString("server_start_script_absolute_path");
+			boolean started = rs.getBoolean("started");
+			server = new Server(id, pid, createDate, serverContainerAbsolutePath, serverStartScriptAbsolutePath,started);
 		}
 		catch(SQLException e){
 			e.printStackTrace();

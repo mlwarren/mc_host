@@ -30,6 +30,8 @@ public class ServerController{
 		try {
 			Process p = Runtime.getRuntime().exec("kill " + server.getPid());
 			logger.debug(ShellUtils.outputToString(p));
+			p = Runtime.getRuntime().exec("rm -rf " + server.getServerContainerAbsolutePath()+"/pid.txt");
+			logger.debug(ShellUtils.outputToString(p));
 			ServerDAO serverDAO = new ServerDAO();
 			serverDAO.updateServerStartedByPID(server.getPid(), false);
 			server.setPid(-1);

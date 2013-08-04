@@ -29,7 +29,7 @@ public class ServerProvisioner{
 		copyZipToDestination(serverSourceAbsolutePath, zipFileName, serverDirectory, serverDestinationAbsolutePath);
 		configureServerProperties(serverDestinationAbsolutePath+serverDirectory);
 		buildStartMinecraftShellScript(serverDestinationAbsolutePath+serverDirectory);
-		Server returnServer = new Server(-1, new Date(), serverDestinationAbsolutePath+serverDirectory, serverDestinationAbsolutePath+serverDirectory+"/start_minecraft.sh", true);
+		Server returnServer = new Server(-1, -1, new Date(), serverDestinationAbsolutePath+serverDirectory, serverDestinationAbsolutePath+serverDirectory+"/start_minecraft.sh", true);
 		logger.debug( "createNewServer <");
 		return returnServer;
 	}
@@ -93,10 +93,12 @@ public class ServerProvisioner{
 	public void buildStartMinecraftShellScript(String minecraftDirectory){
 		logger.debug( "buildStartMinecraftShellScript >");
 		try{
+			//TODO: make dynamic based on input .txt file -- different versions of vanilla minecraft and bukkit
 			FileWriter fw = new FileWriter(new File(minecraftDirectory+"/start_minecraft.sh"));
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write("cd " + minecraftDirectory +"\n");
-			bw.write("java -Xmx2048M -Xms32M -jar minecraft_server.1.6.2.jar nogui &");
+			bw.write("java -Xmx2048M -Xms32M -jar minecraft_server.1.6.2.jar nogui & ");
+			//For bukkit -- java -Xmx2048M -Xms32M -jar craftbukkit-1.5.2-R1.0.jar -o true & echo $! > ./pid.txt
 			bw.write("echo $! > ./pid.txt");
 			bw.close();
 			
