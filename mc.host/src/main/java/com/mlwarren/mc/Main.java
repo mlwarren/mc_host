@@ -32,6 +32,7 @@ public class Main {
 			System.out.println("S(t)art server");
 			System.out.println("(E)dit server");
 			System.out.println("(D)ecomission server");
+			System.out.println("(G)et supported versions");
 			System.out.println("(Q)uit");
 			input=console.readLine();
 			if(input.equals("C") || input.equals("c")){
@@ -47,11 +48,11 @@ public class Main {
 			}
 			if(input.equals("P") || input.equals("p")){
 				System.out.println("Provisioning new server:");
-				String serverSourceAbsolutePath = console.readLine("Enter server source absolute path, remember to include trailing /\n");
-				String zipFileName = console.readLine("Enter zip file name, omit .zip extension\n");
-				String serverDestinationAbsolutePath = console.readLine("Enter server destiantion absolute path, remember to include trailing /\n");
+				System.out.println("Enter desired server version. Version list:\n" + ShellUtils.getSupportedMCVersions());
+				String mcServerVersion=console.readLine();
+				String serverParentDirectoryAbsolutePath = console.readLine("Enter server parent directory absolute path, remember to include trailing /\n");
 				String serverDirectory = console.readLine("Enter server directory name (relative path), remember to include trailing /\n");
-				Server server = serverProvisioner.createNewServer(serverSourceAbsolutePath, zipFileName, serverDirectory, serverDestinationAbsolutePath);
+				Server server = serverProvisioner.createNewServer(ShellUtils.getVersionsDataDirectory(), mcServerVersion, serverDirectory, serverParentDirectoryAbsolutePath);
 				server=serverController.startServer(server);
 				System.out.println("Server provisoned. Server information: ");
 				System.out.println(server);
@@ -59,10 +60,22 @@ public class Main {
 			}
 			if(input.equals("S") || input.equals("s")){
 				System.out.println("Stopping server:");
-				String id = console.readLine("Enter ID of server to stop\n");
+				System.out.println("Enter ID of server to stop. Server list: \n");
+				List<Server> serverList = serverDAO.getAllServers();
+				if(serverList==null){
+					System.out.println("No servers provisoined.");
+				}
+				else{
+					System.out.println(serverList.toString());
+				}
+				String id = console.readLine();
 				Server server = serverDAO.getServerByID(Integer.parseInt(id));
 				if(server==null){
 					System.out.println("ID not found, cannot stop that server.");
+					continue;
+				}
+				if(!server.isStarted()){
+					System.out.println("Server already stopped, doing nothing.");
 					continue;
 				}
 				serverController.stopServer(server);
@@ -70,10 +83,22 @@ public class Main {
 			}
 			if(input.equals("T") || input.equals("t")){
 				System.out.println("Starting server:");
-				String id = console.readLine("Enter ID of server to start\n");
+				System.out.println("Enter ID of server to start. Server list: \n");
+				List<Server> serverList = serverDAO.getAllServers();
+				if(serverList==null){
+					System.out.println("No servers provisoined.");
+				}
+				else{
+					System.out.println(serverList.toString());
+				}
+				String id = console.readLine();
 				Server server = serverDAO.getServerByID(Integer.parseInt(id));
 				if(server==null){
 					System.out.println("ID not found, cannot start that server.");
+					continue;
+				}
+				if(server.isStarted()){
+					System.out.println("Server already started, doing nothing.");
 					continue;
 				}
 				server=serverController.startServer(server);
@@ -81,7 +106,15 @@ public class Main {
 			}
 			if(input.equals("E") || input.equals("e")){
 				System.out.println("Editing server:");
-				String id = console.readLine("Enter ID of server to edit\n");
+				System.out.println("Enter ID of server to edit. Server list:\n");
+				List<Server> serverList = serverDAO.getAllServers();
+				if(serverList==null){
+					System.out.println("No servers provisoined.");
+				}
+				else{
+					System.out.println(serverList.toString());
+				}
+				String id = console.readLine();
 				Server server = serverDAO.getServerByID(Integer.parseInt(id));
 				if(server==null){
 					System.out.println("ID not found, cannot edit that server.");
@@ -90,10 +123,25 @@ public class Main {
 				serverProvisioner.editServer(Integer.parseInt(id));
 				System.out.println("Server edited, please stop and restart server for edits to take effect.");
 				continue;
-			} //TODO: Create option for upgrading/downgrading server jar, will need to copy jar and edit start_minecraft.sh script
+			}
 			if(input.equals("D") || input.equals("d")){
 				System.out.println("Decomissioning server:");
-				String idString = console.readLine("Enter ID of server to decomission.\n");
+				System.out.println("Enter ID of server to decomission. Server list:\n");
+				List<Server> serverList = serverDAO.getAllServers();
+				if(serverList==null){
+					System.out.println("No servers provisoined.");
+				}
+				else{
+					System.out.println(serverList.toString());
+				}
+				String idString = console.readLine();
+				System.out.println("Decomissioning will stop server and delete server from filesystem.");
+				System.out.println("It is recommended backups are made prior to decomissioning.");
+				System.out.println("Are you sure you want to decomission server " + idString + " (Y/N) ?");
+				if(!console.readLine().equals("Y")){
+					System.out.println("Server not decomissioned.");
+					continue;
+				}
 				Server server = serverDecomissioner.removeServer(Integer.parseInt(idString));
 				if(server!=null){
 					serverDecomissioner.deleteServerFilesFromFileSystem(server.getServerContainerAbsolutePath());
@@ -105,6 +153,12 @@ public class Main {
 				}
 				continue;
 			}
+			if(input.equals("G") || input.equals("g")){
+				System.out.println("Get supported versions:");
+				System.out.println(ShellUtils.getSupportedMCVersions());
+				continue;
+			}
+			 //TODO: Create option for upgrading/downgrading server jar, will need to copy jar and edit start_minecraft.sh script
 		}
 		
 		logger.debug( "main <");

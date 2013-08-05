@@ -77,4 +77,41 @@ public class ShellUtils {
 		logger.debug("getPIDForServer, pid = " + pid + " < ");
 		return Integer.parseInt(pid);
 	}
+	
+	public static String getSupportedMCVersions(){
+		logger.debug("getSupportedMCVersions >");
+		String output = "";
+		try{
+			FileReader fw = new FileReader("version_list.properties");
+			BufferedReader br = new BufferedReader(fw);
+			String line;
+			while((line=br.readLine())!=null){
+				output+=line+"\n";
+			}
+			br.close();
+			fw.close();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		logger.debug("getSupportedMCVersions <");
+		return output;
+	}
+	
+	public static String getVersionsDataDirectory(){
+		logger.debug("getVersionsDataDirectory >");
+		String output = "";
+		try{
+			FileReader fw = new FileReader("versions.properties");
+			BufferedReader br = new BufferedReader(fw);
+			output=br.readLine();
+			br.close();
+			fw.close();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		logger.debug("getVersionsDataDirectory <");
+		return output;
+	}
 }

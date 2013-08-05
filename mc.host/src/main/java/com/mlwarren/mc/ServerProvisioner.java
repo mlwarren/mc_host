@@ -20,17 +20,13 @@ import com.mlwarren.mc.utils.ShellUtils;
 public class ServerProvisioner{
 	
 	private static Logger logger = LogManager.getLogger(ServerProvisioner.class);
-	
-	String serverSourceAbsolutePath;
-	String zipFileName;
-	String serverDestinationAbsolutePath;
 
-	public Server createNewServer(String serverSourceAbsolutePath, String zipFileName, String serverDirectory, String serverDestinationAbsolutePath){
+	public Server createNewServer(String serverSourceAbsolutePath, String mcServerVersion, String serverDirectory, String serverParentDirectoryAbsolutePath){
 		logger.debug( "createNewServer >");
-		copyZipToDestination(serverSourceAbsolutePath, zipFileName, serverDirectory, serverDestinationAbsolutePath);
-		configureServerProperties(serverDestinationAbsolutePath+serverDirectory);
-		buildStartMinecraftShellScript(serverDestinationAbsolutePath+serverDirectory);
-		Server returnServer = new Server(-1, -1, new Date(), serverDestinationAbsolutePath+serverDirectory, serverDestinationAbsolutePath+serverDirectory+"/start_minecraft.sh", true);
+		copyZipToDestination(serverSourceAbsolutePath, mcServerVersion, serverDirectory, serverParentDirectoryAbsolutePath);
+		configureServerProperties(serverParentDirectoryAbsolutePath+serverDirectory);
+		buildStartMinecraftShellScript(serverParentDirectoryAbsolutePath+serverDirectory);
+		Server returnServer = new Server(-1, -1, new Date(), serverParentDirectoryAbsolutePath+serverDirectory, serverParentDirectoryAbsolutePath+serverDirectory+"/start_minecraft.sh", true);
 		logger.debug( "createNewServer <");
 		return returnServer;
 	}

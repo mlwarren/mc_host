@@ -18,7 +18,7 @@ public class ServerDecomissioner {
 		//Make sure given PID is in database
 		Server server = serverDAO.getServerByID(id);
 		if(server==null){
-			logger.debug("Can't kill that PID, it's not catalogued as a server...");
+			logger.debug("Can't kill that ID, it's not catalogued as a server...");
 			logger.debug("removeServer < ");
 			return null;
 		}
